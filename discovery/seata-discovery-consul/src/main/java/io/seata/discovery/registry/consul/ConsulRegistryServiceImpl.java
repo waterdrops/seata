@@ -28,6 +28,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import io.seata.config.exception.ConfigNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -163,7 +164,8 @@ public class ConsulRegistryServiceImpl implements RegistryService<ConsulListener
     public List<InetSocketAddress> lookup(String key) throws Exception {
         final String cluster = getServiceGroup(key);
         if (cluster == null) {
-            return null;
+            String missingDataId = PREFIX_SERVICE_ROOT + CONFIG_SPLIT_CHAR + PREFIX_SERVICE_MAPPING + key;
+            throw new ConfigNotFoundException("%s configuration item is required", missingDataId);
         }
         return lookupByCluster(cluster);
 
@@ -343,7 +345,7 @@ public class ConsulRegistryServiceImpl implements RegistryService<ConsulListener
             if ((currentIndex != null && currentIndex > consulIndex) || hasError) {
                 hasError = false;
                 List<HealthService> services = response.getValue();
-                consulIndex = currentIndex;
+                consulIndex = currentIndex;/*lgtm[java/dereferenced-value-may-be-null]*/
                 for (ConsulListener listener : listenerMap.get(cluster)) {
                     listener.onEvent(services);
                 }

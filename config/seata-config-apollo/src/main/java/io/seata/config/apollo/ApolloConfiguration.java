@@ -46,14 +46,14 @@ import static io.seata.config.ConfigurationKeys.FILE_ROOT_CONFIG;
 /**
  * The type Apollo configuration.
  *
- * @author: kl @kailing.pub
+ * @author kl @kailing.pub
  */
 public class ApolloConfiguration extends AbstractConfiguration {
 
     private static final String REGISTRY_TYPE = "apollo";
     private static final String APP_ID = "appId";
     private static final String APOLLO_META = "apolloMeta";
-    private static final String APOLLO_SECRET = "apolloAccesskeySecret";
+    private static final String APOLLO_SECRET = "apolloAccessKeySecret";
     private static final String APOLLO_CLUSTER = "cluster";
     private static final String APOLLO_CONFIG_SERVICE = "apolloConfigService";
     private static final String PROP_APP_ID = "app.id";
@@ -72,6 +72,7 @@ public class ApolloConfiguration extends AbstractConfiguration {
     private static final int MAX_CONFIG_OPERATE_THREAD = 2;
     private static volatile ApolloConfiguration instance;
 
+    @SuppressWarnings("lgtm[java/unsafe-double-checked-locking-init-order]")
     private ApolloConfiguration() {
         readyApolloConfig();
         if (config == null) {
@@ -185,13 +186,13 @@ public class ApolloConfiguration extends AbstractConfiguration {
                 System.setProperty(PROP_APOLLO_SECRET, apolloAccesskeySecret);
             }
         }
-        if (!properties.containsKey(APOLLO_CLUSTER)) {
+        if (!properties.containsKey(PROP_APOLLO_CLUSTER)) {
             String apolloCluster = FILE_CONFIG.getConfig(getApolloCluster());
             if (StringUtils.isNotBlank(apolloCluster)) {
                 System.setProperty(PROP_APOLLO_CLUSTER, apolloCluster);
             }
         }
-        if (!properties.containsKey(APOLLO_CONFIG_SERVICE)) {
+        if (!properties.containsKey(PROP_APOLLO_CONFIG_SERVICE)) {
             String apolloConfigService = FILE_CONFIG.getConfig(getApolloConfigService());
             if (StringUtils.isNotBlank(apolloConfigService)) {
                 System.setProperty(PROP_APOLLO_CONFIG_SERVICE, apolloConfigService);
@@ -208,27 +209,27 @@ public class ApolloConfiguration extends AbstractConfiguration {
         return REGISTRY_TYPE;
     }
 
-    private static String getApolloMetaFileKey() {
+    public static String getApolloMetaFileKey() {
         return String.join(FILE_CONFIG_SPLIT_CHAR, FILE_ROOT_CONFIG, REGISTRY_TYPE, APOLLO_META);
     }
 
-    private static String getApolloSecretFileKey() {
+    public static String getApolloSecretFileKey() {
         return String.join(FILE_CONFIG_SPLIT_CHAR, FILE_ROOT_CONFIG, REGISTRY_TYPE, APOLLO_SECRET);
     }
 
-    private static String getApolloAppIdFileKey() {
+    public static String getApolloAppIdFileKey() {
         return String.join(FILE_CONFIG_SPLIT_CHAR, FILE_ROOT_CONFIG, REGISTRY_TYPE, APP_ID);
     }
 
-    private static String getApolloNamespaceKey() {
+    public static String getApolloNamespaceKey() {
         return String.join(FILE_CONFIG_SPLIT_CHAR, FILE_ROOT_CONFIG, REGISTRY_TYPE, NAMESPACE);
     }
 
-    private static String getApolloCluster() {
+    public static String getApolloCluster() {
         return String.join(FILE_CONFIG_SPLIT_CHAR, FILE_ROOT_CONFIG, REGISTRY_TYPE, APOLLO_CLUSTER);
     }
 
-    private static String getApolloConfigService() {
+    public static String getApolloConfigService() {
         return String.join(FILE_CONFIG_SPLIT_CHAR, FILE_ROOT_CONFIG, REGISTRY_TYPE, APOLLO_CONFIG_SERVICE);
     }
 
